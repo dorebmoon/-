@@ -10,9 +10,9 @@ def conect(tup1):
                                  db='change_rate',
                                  cursorclass=pymysql.cursors.DictCursor)
     with connection.cursor() as cursor:
-        sql1 = 'delete from normal'
+        #sql1 = 'delete from normal'
         sql = 'insert into normal (currency,rate)values{}'.format(tup1)
-        cursor.execute(sql1)
+        #cursor.execute(sql1)
         cursor.execute(sql)
     connection.commit()
     connection.close()
@@ -29,5 +29,5 @@ def get_rate(currency1):
         rate = cursor.fetchall()[0]['rate']
     connection.close()
     return rate
-#rate2 = get_rate('委内瑞拉博利瓦(VEF)')
-#print(rate2)
+rate2 = get_rate('委内瑞拉博利瓦(VEF)')
+print(rate2)
