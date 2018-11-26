@@ -5,13 +5,11 @@ import tkinter as tk
 from tkinter import ttk
 from make_trans import make
 
-def go(*args):
-	print(comboxlist.get())
-
 windows = tk.Tk()
 windows.title('汇率小工具')
 windows.geometry('450x400')
 var1 = tk.StringVar()
+var2 = tk.StringVar()
 li1 = ['港元(HKD)', '澳门元(MOP)', '台币(TWD)', '欧元(EUR)', '美元(USD)', '英镑(GBP)', '澳元(AUD)', '韩元(KRW)', '日元(JPY)',
 	   '离岸人民币(CNH)', '加拿大元(CAD)', '俄罗斯卢布(RUB)', '泰国铢(THB)', '菲律宾比索(PHP)', '阿尔巴尼亚列克(ALL)', '阿根廷比索(ARS)',
 	   '阿鲁巴岛弗罗林(AWG)', '阿联酋迪拉姆(AED)', '列斯荷兰盾(ANG)', '阿塞拜疆新马纳特(AZN)', '安哥拉宽扎(AOA)', '巴哈马元(BSD)', '巴林第纳尔(BHD)',
@@ -33,36 +31,76 @@ li1 = ['港元(HKD)', '澳门元(MOP)', '台币(TWD)', '欧元(EUR)', '美元(US
 	   '乌拉圭新比索(UYU)', '乌干达先令(UGX)', '瓦努阿图瓦图(VUV)', '委内瑞拉博利瓦(VEF)', '越南盾(VND)', '萨摩亚塔拉(WST)', '多哥非洲共同体法郎(XOF)',
 	   '刚果中非共同体法郎(XAF)', '格林纳达东加勒比元(XCD)', '太平洋法郎(XPF)', '也门里亚尔(YER)', '津巴布韦元(ZWD)', '南非兰特(ZAR)', '赞比亚克瓦查(ZMW)']
 
+#创建列表事件
+def get_msg1(*args):
+	global a
+	a = comboxlist1.get()
+
+def get_msg2(*args):
+	global b
+	b = comboxlist2.get()
+
 def get_math():    #获取输入的人民币金额
 	var = e.get()
 	return var
-
+values = False
 def insert_result(): #计算换算的结果
-	math = get_math() #将输入栏的人民币值赋给math参数
-	var = make(b,math)
-	text.insert(1.0,var) #显示换算结果
+	global values
+	if values == False:
+		values = True
+		global math
+		math = get_math() #将输入栏的人民币值赋给math参数
+		global var
+		var = make(a,b,math)
+		text.insert(1.0,a) #显示换算结果
+	else:
+		values = False
+		var1.set('')
+		var2.set('')
+		text.delete('1.0','end')
 
-b1 = tk.Button(windows,text="输入人民币金额",width=15,height=2)
-b1.pack()
+#创建源币种提示栏
+lb1 = tk.Label(windows,
+	text='请选择需要进行兑换的币种',  # 标签文本内容
+	#bg='green',  # 标签背景颜色
+	font=('Arial', 15),  # 文本字体及大小
+	width=25, height=2)  # 标签宽高
+lb1.pack() #固定窗口位置
+#添加源币种下拉栏
+comboxlist1 = ttk.Combobox(windows,textvariable=var1)#初始化下拉栏
+comboxlist1['values'] = li1 #将列表导入下拉栏
+comboxlist1['state'] = 'readonly'
+comboxlist1.current(0) #提取选中的后切换到第一个位置的选项
+#a = comboxlist1.get() #获取选取框中的值
+comboxlist1.bind("<<comboboxselect>>",get_msg1)
+comboxlist1.pack()
+#源币种金额
+lb2 = tk.Label(windows,
+				text='请输入需要兑换的金额',
+				font=('Arial',15),
+				width=25,height=2)
+lb2.pack()
 e = tk.Entry(windows)
 e.pack()
-b2 = tk.Button(windows,text="请选择币种",width=15,height=2)
-b2.pack()
-
-comboxlist = ttk.Combobox(windows,textvariable=var1)#初始化下拉栏
-comboxlist['values'] = li1 #将列表导入下拉栏
-comboxlist['state'] = 'readonly'
-comboxlist.current(0) #提取选中的后切换到第一个位置的选项
-b = comboxlist.get() #获取选取框中的值
-comboxlist.bind("choose currency",go) #绑定go函数
-comboxlist.pack()
-
+#选择目的币种提示栏
+lb3 = tk.Label(windows,
+				text='请选择兑换成哪种币',
+				font=('Frial',15),
+				width=25,height=2)
+lb3.pack()
+#选择目的币种下拉栏
+comboxlist2 = ttk.Combobox(windows,textvariable=var2)#初始化下拉栏
+comboxlist2['values'] = li1 #将列表导入下拉栏
+comboxlist2['state'] = 'readonly'
+comboxlist2.current(0) #提取选中的后切换到第一个位置的选项
+#b = comboxlist2.get() #获取选取框中的值
+comboxlist2.bind("<<comboboxselect>>",get_msg2)
+comboxlist2.pack()
+#兑换触发
 b3 = tk.Button(windows,text="兑换",width=15,height=2,command=insert_result)
 b3.pack()
-
 text = tk.Text(windows,height=2)
+#text.grid(row=0,column=1)
 text.pack()
 
 windows.mainloop()
-
-

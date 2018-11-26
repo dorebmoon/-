@@ -17,17 +17,23 @@ def conect(tup1):
     connection.commit()
     connection.close()
 
-def get_rate(currency1):
+def get_rate(currency1,currency2):
     connection = pymysql.connect(host='10.10.2.19',
                                  user='ayu',
                                  password='yicai127',
                                  db='change_rate',
                                  cursorclass =pymysql.cursors.DictCursor)
     with connection.cursor() as cursor:
-        sql = 'select rate from normal where currency=%s'
-        cursor.execute(sql,currency1)
-        rate = cursor.fetchall()[0]['rate']
+        alist = []
+        for i in (currency1,currency2):
+            sql = 'select rate from normal where currency=%s'
+            cursor.execute(sql,i)
+            alist.append(cursor.fetchall()[0])
+        #sql = 'select rate from normal where currency=%s'
+        #cursor.execute(sql,currency1)
+        #rate = cursor.fetchall()[0]['rate']
     connection.close()
-    return rate
-rate2 = get_rate('委内瑞拉博利瓦(VEF)')
-print(rate2)
+    #return rate
+    return alist
+#rate2 = get_rate('委内瑞拉博利瓦(VEF)','澳门元(MOP)')
+#print(rate2)
